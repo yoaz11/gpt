@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Pong Game</title>
+	<style>
+		canvas {
+			border: 1px solid black;
+		}
+	</style>
+</head>
+<body>
+	<canvas id="canvas" width="800" height="600"></canvas>
+	<script>
+		// Get the canvas element and its context
+		var canvas = document.getElementById("canvas");
+		var context = canvas.getContext("2d");
+
+		// Define some variables
+		var paddle1Y = 250;
+		var paddle2Y = 250;
+		var paddleHeight = 100;
+		var ballX = 400;
+		var ballY = 300;
+		var ballRadius = 10;
+		var ballSpeedX = 5;
+		var ballSpeedY = 5;
+		var player1Score = 0;
+		var player2Score = 0;
+
+		// Draw the paddles and ball
+		function draw() {
+			// Clear the canvas
+			context.clearRect(0, 0, canvas.width, canvas.height);
+
+			// Draw the paddles
+			context.fillRect(20, paddle1Y, 10, paddleHeight);
+			context.fillRect(canvas.width - 30, paddle2Y, 10, paddleHeight);
+
+			// Draw the ball
+			context.beginPath();
+			context.arc(ballX, ballY, ballRadius, 0, Math.PI*2, false);
+			context.fill();
+
+			// Draw the scores
+			context.fillText("Player 1: " + player1Score, 50, 50);
+			context.fillText("Player 2: " + player2Score, canvas.width - 150, 50);
+		}
+
+		// Update the position of the ball
+		function move() {
+			// Update the ball position
+			ballX += ballSpeedX;
+			ballY += ballSpeedY;
+
+			// Check if the ball has hit a paddle
+			if ((ballX < 30 && ballY >= paddle1Y && ballY <= paddle1Y + paddleHeight) ||
+			    (ballX > canvas.width - 30 && ballY >= paddle2Y && ballY <= paddle2Y + paddleHeight)) {
+				ballSpeedX = -ballSpeedX;
+			}
+
+			// Check if the ball has hit the top or bottom of the canvas
+			if (ballY < ballRadius || ballY > canvas.height - ballRadius) {
+				ballSpeedY = -ballSpeedY;
+			}
+
+			// Check if the ball has gone past a paddle
+			if (ballX < 0 || ballX > canvas.width) {
+				if (ballX < 0) {
+					player2Score++;
+				} else {
+					player1Score++;
+				}
+
+				ballX = 400;
+				ballY = 300;
+				ballSpeedX = -ballSpeedX;
+				ballSpeedY = -ballSpeedY;
+			}
+		}
+
+		// Handle keyboard input
+		window.addEventListener("keydown", function(event) {
+			if (event.keyCode == 38) { // Up arrow
+				paddle2Y -= 20;
+			} else if (event.keyCode == 40) { // Down arrow
+				paddle2Y += 20;
+			}
+		});
+
+		// Main game loop
+		setInterval(function() {
+			move();
+			draw();
+		}, 20);
+	</script>
+</body>
+</html>
